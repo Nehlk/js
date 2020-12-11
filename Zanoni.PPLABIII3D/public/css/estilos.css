@@ -192,3 +192,23 @@ nav ul {
   border-radius: 7px;
   background-color: white;
 }
+
+
+.containerFilter{
+  margin-top: 15px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+  
+}
+
+.containerFilter > div{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.containerFilter > label{
+  font-weight: bold;
+}

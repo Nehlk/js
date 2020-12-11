@@ -4,6 +4,8 @@ import Anuncio from "./anuncio.js";
 import Anuncio_Auto from "./auto.js";
 
 let listaAnuncio;
+let staticList;
+let newListaAnuncio;
 let frmAnuncio;
 let nextID;
 let divTabla;
@@ -12,6 +14,8 @@ const btnCancelar = document.getElementById("btnCancelar");
 const btnAlta = document.getElementById("btnAlta");
 const btnMod = document.getElementById("btnMod");
 const btnOrdenar = document.getElementById("btnOrdenar");
+const dropDown = document.getElementById('filterTransaccion');
+const promedioAnunc = document.getElementById('promedioAnuncios');
 
 const checkbox_Titulo = document.getElementById("colTitulo");
 const checkbox_Trans = document.getElementById("colTrans");
@@ -69,7 +73,7 @@ async function getListAnuncios() {
 
 async function incializarManejadores() {
   listaAnuncio = await getListAnuncios();
-
+  newListaAnuncio = listaAnuncio;
 
   nextID = maxID() + 1;
   crearTabla(listaAnuncio);
@@ -87,6 +91,11 @@ async function incializarManejadores() {
   filterTable(checkbox_Puertas, 'puertas');
   filterTable(checkbox_kms, 'kms');
   filterTable(checkbox_potencia, 'potencia');
+
+  filtroDeTransaccion();
+
+  localStoreSet();
+  staticList = listlocalStoreGet();
 
   //ALTA
   frmAnuncio.addEventListener("submit", async (e) => {
@@ -197,9 +206,9 @@ function actualizarLista() {
   }, 700);
 }
 
-function refreshLista() {
+function refreshLista(list) {
   divTabla.innerHTML = "";
-  divTabla.appendChild(crearTabla(listaAnuncio));
+  divTabla.appendChild(crearTabla(list));
 }
 
 function limpiarDatosForm() {
@@ -217,22 +226,102 @@ btnCancelar.addEventListener("click", (e) => {
 
 const filterTable = (e, property) => {
   e.addEventListener("change", async () => {
+    let auxList;
+
     if (e.checked) {
       switch(property){
-        case 'titulo': listaAnuncio = listaAnuncio.filter((a) => delete a.titulo);break;
-        case 'transaccion': listaAnuncio = listaAnuncio.filter((a) => delete a.transaccion);break;
-        case 'descripcion': listaAnuncio = listaAnuncio.filter((a) => delete a.descripcion);break;
-        case 'precio': listaAnuncio = listaAnuncio.filter((a) => delete a.precio);break;
-        case 'puertas': listaAnuncio = listaAnuncio.filter((a) => delete a.num_puertas);break;
-        case 'kms': listaAnuncio = listaAnuncio.filter((a) => delete a.num_KMs);break;
-        case 'potencia': listaAnuncio = listaAnuncio.filter((a) => delete a.potencia);break;
+        case 'titulo': auxList = listaAnuncio.filter((a) => delete a.titulo);break;
+        case 'transaccion': auxList = listaAnuncio.filter((a) => delete a.transaccion);break;
+        case 'descripcion': auxList = listaAnuncio.filter((a) => delete a.descripcion);break;
+        case 'precio': auxList = listaAnuncio.filter((a) => delete a.precio);break;
+        case 'puertas': auxList = listaAnuncio.filter((a) => delete a.num_puertas);break;
+        case 'kms': auxList = listaAnuncio.filter((a) => delete a.num_KMs);break;
+        case 'potencia': auxList = listaAnuncio.filter((a) => delete a.potencia);break;
       }
 
-      refreshLista();
+      refreshLista(auxList);
     } else {
-    
       listaAnuncio = await getListAnuncios();
-      refreshLista();
+      refreshLista(listaAnuncio);
     }
   });
 };
+
+
+
+const filtroDeTransaccion = ()=>{
+  dropDown.addEventListener('change', ()=>{
+     
+    if(dropDown.value == "todos"){
+      let prom = listaAnuncio.map(myMap)
+       prom = prom.reduce(myReduce)
+       promedioAnunc.value = prom / listaAnuncio.length
+    }
+    else if(dropDown.value == "ventas"){
+      let prom = listaAnuncio.map(myMapVentas)
+   
+      let prom1 = prom.reduce(myReduce)
+       promedioAnunc.value = prom1 / prom.length
+    }
+    else if(dropDown.value == "alquiler"){
+      let prom = listaAnuncio.map(myMapAlquileres)
+      let prom1 = prom.reduce(myReduce)
+       promedioAnunc.value = prom1 / prom.length
+    }
+  })
+}
+
+
+function myReduce(a, b) {
+  let c = parseFloat(a);
+  let d = parseFloat(b);
+  return c + d;
+}
+
+  function myMap(a) {
+  return a.precio;
+}
+
+ function myMapVentas(a) {
+
+  if(a.transaccion == 'Venta'){
+    return a.precio;
+  }
+  else{
+    return 0
+  }
+  
+}
+
+ function myMapAlquileres(a) {
+
+  if(a.transaccion == 'Alquiler'){
+    return a.precio;
+  }
+  else{
+    return 0
+  }
+  
+}
+
+
+const localStoreSet = () =>{
+  const list = listaAnuncio.map(a => a.id) 
+  localStore.setItem("listaStatic", list)
+}
+
+const localStoreGet = () =>{
+
+  localStore.getItem("listaStatic")
+}
+
+
+var data = [
+  {
+    x: staticList,
+    y: [60, 24, 53, 16],
+    type: 'bar'
+  }
+];
+
+Plotly.newPlot('plotlyChart', data);

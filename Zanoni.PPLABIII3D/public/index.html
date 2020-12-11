@@ -10,6 +10,7 @@
 
     <link rel="stylesheet" href="./css/estilos.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="./js/scripts.js" type="module"></script>
     <title>Recuperatorio Zanoni</title>
 </head>
@@ -80,6 +81,17 @@
                <div><label for="colTitulo">Col-Kms</label> <input type="checkbox" name="colKms" id="colKms"></div>
                <div><label for="colTitulo">Col-Potencia</label> <input type="checkbox" name="colPotenc" id="colPotenc"></div>
             </div>
+
+            <div class="containerFilter">
+                <div> <label for="filterTransaccion">Filtrar Transaccion</label> <select name="ftransaccion" id="filterTransaccion">
+                        <option value="todos">Todos</option>
+                        <option value="ventas">Ventas</option>
+                        <option value="alquiler">Alquiler</option>
+                </select></div>
+                <div>
+                    <label for="promedioAnuncios">Promedio</label><input type="number" name="promedioAnuncios" id="promedioAnuncios" disabled>
+                </div>
+            </div>
             
             <br></br>
             <button class="btn btn-outline-success" id="btnAlta"> Guardar</button>
@@ -101,6 +113,8 @@
 
         </div>
     </section>
+
+    <div id="plotlyChart"></div>
     <footer>
         <p>Todos los derechos reservados 2020 &copy;</p>
         <nav>

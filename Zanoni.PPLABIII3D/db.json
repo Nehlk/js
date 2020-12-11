@@ -39,6 +39,16 @@
       "num_puertas": "3",
       "num_KMs": "22",
       "potencia": "3"
+    },
+    {
+      "id": 7,
+      "titulo": "BMW",
+      "transaccion": "Venta",
+      "descripcion": "used",
+      "precio": "204952",
+      "num_puertas": "5",
+      "num_KMs": "2232",
+      "potencia": "456"
     }
   ]
 }
